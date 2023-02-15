@@ -3,7 +3,6 @@ import os
 import sys
 import time
 from http import HTTPStatus
-from logging.handlers import RotatingFileHandler
 
 import requests
 import telegram
@@ -30,24 +29,23 @@ HOMEWORK_VERDICTS = {
 
 logging.basicConfig(
     level=logging.DEBUG,
-    format='%(asctime)s, %(levelname)s, %(message)s, %(name)s'
+    format='%(asctime)s, %(levelname)s, %(message)s, %(name)s',
+    handlers=(
+        logging.StreamHandler(stream=sys.stdout,),
+        logging.FileHandler('main.log', encoding="UTF-8")
+    )
 )
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-handler = RotatingFileHandler('my_logger.log', maxBytes=5000000, backupCount=5)
-logger.addHandler(handler)
-formatter = logging.Formatter(
-    '%(asctime)s, %(levelname)s, %(message)s, %(name)s'
-)
-handler.setFormatter(formatter)
 
 
 def check_tokens():
     """Убедитесь, что в функции `check_tokens` есть docstring."""
-    check = all((PRACTICUM_TOKEN, TELEGRAM_TOKEN, TELEGRAM_CHAT_ID))
-    if not check:
-        logging.critical('Проверьте переменные окружения', exc_info=False)
-    return check
+    tokens = (PRACTICUM_TOKEN, TELEGRAM_TOKEN, TELEGRAM_CHAT_ID)
+    for token in tokens:
+        if token is None:
+            logging.critical(
+                f'Отсутствует переменная окружения: {token}'
+            )
+    return all(tokens)
 
 
 def send_message(bot, message):
