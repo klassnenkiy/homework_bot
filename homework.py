@@ -39,13 +39,17 @@ logging.basicConfig(
 
 def check_tokens():
     """Убедитесь, что в функции `check_tokens` есть docstring."""
-    tokens = (PRACTICUM_TOKEN, TELEGRAM_TOKEN, TELEGRAM_CHAT_ID)
-    for token in tokens:
-        if token is None:
+    tokens = (
+        ('PRACTICUM_TOKEN', PRACTICUM_TOKEN),
+        ('TELEGRAM_TOKEN', TELEGRAM_TOKEN),
+        ('TELGRAM_CHAT_ID', TELEGRAM_CHAT_ID)
+    )
+    for name, token in tokens:
+        if not token:
             logging.critical(
-                f'Отсутствует переменная окружения: {token}'
+                f'Отсутствует переменная окружения: {name} {token} '
             )
-    return all(tokens)
+    return all((name, token))
 
 
 def send_message(bot, message):
